@@ -23,10 +23,10 @@ spring:
           enabled: true
       # 路由规则
       routes:
-        - id: retry_route # 路由 ID，保持唯一
+        - id: spring-boot-server # 路由 ID，保持唯一
           uri: lb://${application.service.spring-boot-server.name}
           predicates:
-            - Path=/retry/** # 路径前缀
+            - Path=/spring-boot-server/** # 路径前缀
           filters:
             - StripPrefix=1
             - name: Retry

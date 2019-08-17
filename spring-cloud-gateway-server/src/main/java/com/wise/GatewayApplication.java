@@ -9,7 +9,7 @@ import reactor.core.publisher.Mono;
 
 /**
  * 启动类
- * 访问：
+ * 访问：http://127.0.0.1:10000/spring-boot-server/users/40
  */
 @SpringBootApplication
 public class GatewayApplication {
