@@ -1,0 +1,56 @@
+
+
+# 自定义属性
+application:
+  service:
+    spring-boot-server:
+      name: spring-boot-server
+
+server:
+  port: 10000
+
+spring:
+  application:
+    name: spring-cloud-gateway-server
+#  redis:
+#    host: 127.0.0.1
+#    password:
+#    port: 6379
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+      # 路由规则
+      routes:
+        - id: retry_route # 路由 ID，保持唯一
+          uri: lb://${application.service.spring-boot-server.name}
+          predicates:
+            - Path=/retry/** # 路径前缀
+          filters:
+            - StripPrefix=1
+            - name: Retry
+              args:
+                retries: 3 # 重试次数，默认值是 3 次
+                methods: GET # 指定哪些方法的请求需要进行重试逻辑，默认值是 GET 方法，取值参考：org.springframework.http.HttpMethod
+                statuses: BAD_GATEWAY # HTTP 的状态返回码，取值请参考：org.springframework.http.HttpStatus
+
+eureka:
+  client:
+    service-url:
+      # 指定eureka server通信地址，注意/eureka/小尾巴不能少
+      defaultZone: http://admin:123456@127.0.0.1:8761/eureka/
+  instance:
+    # 是否注册 IP 到 eureka server，如不指定或设为 false，那就会注册主机名到 eureka server
+    prefer-ip-address: true
+
+logging:
+  level:
+    org.springframework.cloud.gateway: debug
+
+ribbon:
+  eager-load:
+    # 开启 Ribbon 的饥饿加载模式
+    enabled: true
+    # 指定需要饥饿加载的客户端名称、服务名
+    clients: ${application.service.spring-boot-server.name}
